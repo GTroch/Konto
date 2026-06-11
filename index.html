@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Arbeitsblatt: Die Klasse Konto.java selbst programmieren</title>
+  <style>
+    /* ── Basis ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 13pt;
+      line-height: 1.65;
+      color: #1a1a2e;
+      background: #f5f7fa;
+    }
+
+    /* ── Seiten-Wrapper ── */
+    .page {
+      max-width: 860px;
+      margin: 30px auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      padding: 48px 56px 56px;
+    }
+
+    /* ── Kopfzeile ── */
+    header {
+      border-bottom: 3px solid #1565c0;
+      padding-bottom: 18px;
+      margin-bottom: 30px;
+    }
+    .header-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10pt;
+      color: #555;
+      margin-bottom: 6px;
+    }
+    header h1 {
+      font-size: 22pt;
+      color: #1565c0;
+      font-weight: 700;
+    }
+    header .subtitle {
+      font-size: 13pt;
+      color: #1976d2;
+      margin-top: 4px;
+    }
+
+    /* ── Lernziele-Box ── */
+    .lernziele {
+      background: #e3f2fd;
+      border-left: 5px solid #1565c0;
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin-bottom: 32px;
+    }
+    .lernziele h2 {
+      color: #1565c0;
+      font-size: 12pt;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .lernziele ul {
+      margin-left: 20px;
+    }
+    .lernziele ul li { margin-bottom: 4px; }
+
+    /* ── Abschnitt-Titel ── */
+    h2.section-title {
+      font-size: 14pt;
+      color: #0d47a1;
+      border-bottom: 2px solid #90caf9;
+      padding-bottom: 4px;
+      margin: 36px 0 18px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Schritt-Karte ── */
+    .step {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #1565c0;
+      color: #fff;
+      padding: 12px 20px;
+    }
+    .step-number {
+      background: #fff;
+      color: #1565c0;
+      font-weight: 800;
+      font-size: 14pt;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-title { font-size: 13pt; font-weight: 600; }
+    .step-body { padding: 20px 24px; }
+    .step-body p { margin-bottom: 12px; }
+    .step-body p:last-child { margin-bottom: 0; }
+
+    /* ── Info-Box (Merke / Tipp) ── */
+    .info-box {
+      border-radius: 6px;
+      padding: 13px 16px;
+      margin: 14px 0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .info-box.merke   { background: #fff8e1; border-left: 4px solid #f9a825; }
+    .info-box.aufgabe { background: #e8f5e9; border-left: 4px solid #2e7d32; }
+    .info-box.bonus   { background: #fce4ec; border-left: 4px solid #c62828; }
+    .info-box .icon   { font-size: 16pt; line-height: 1; flex-shrink: 0; }
+    .info-box .text   { flex: 1; }
+    .info-box .text strong { display: block; margin-bottom: 4px; }
+
+    /* ── Code-Block ── */
+    pre {
+      background: #1e1e2e;
+      color: #cdd6f4;
+      border-radius: 7px;
+      padding: 16px 20px;
+      font-family: "Consolas", "Fira Mono", "Courier New", monospace;
+      font-size: 10.5pt;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin: 14px 0;
+      tab-size: 4;
+    }
+    code {
+      background: #e8eaf6;
+      color: #283593;
+      border-radius: 3px;
+      padding: 1px 5px;
+      font-family: "Consolas", "Fira Mono", "Courier New", monospace;
+      font-size: 10pt;
+    }
+
+    /* ── Syntax-Highlighting (einfach) ── */
+    .kw { color: #89b4fa; font-weight: bold; }   /* keyword */
+    .ty { color: #a6e3a1; }                        /* type */
+    .st { color: #f38ba8; }                        /* string */
+    .cm { color: #6c7086; font-style: italic; }    /* comment */
+    .nm { color: #fab387; }                        /* number/name */
+
+    /* ── Tabelle ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 11.5pt;
+    }
+    thead tr { background: #1565c0; color: #fff; }
+    thead th { padding: 10px 14px; text-align: left; font-weight: 600; }
+    tbody tr:nth-child(even) { background: #f5f7fa; }
+    tbody td { padding: 9px 14px; border-bottom: 1px solid #e0e0e0; }
+
+    /* ── Ausgabe-Box ── */
+    .output {
+      background: #263238;
+      color: #b2ff59;
+      font-family: "Consolas", monospace;
+      font-size: 10pt;
+      border-radius: 6px;
+      padding: 13px 18px;
+      margin: 12px 0;
+    }
+    .output::before {
+      content: "▶  Konsolenausgabe";
+      display: block;
+      color: #78909c;
+      font-size: 9pt;
+      margin-bottom: 8px;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    /* ── Checkliste ── */
+    .checklist { list-style: none; margin: 10px 0 10px 4px; }
+    .checklist li { margin-bottom: 7px; padding-left: 28px; position: relative; }
+    .checklist li::before {
+      content: "☐";
+      position: absolute;
+      left: 0;
+      color: #1565c0;
+      font-size: 13pt;
+    }
+
+    /* ── Musterlösung ── */
+    .solution {
+      border: 2px dashed #bdbdbd;
+      border-radius: 8px;
+      margin-top: 36px;
+    }
+    .solution-header {
+      background: #37474f;
+      color: #fff;
+      padding: 13px 22px;
+      border-radius: 6px 6px 0 0;
+      font-size: 13pt;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .solution-body { padding: 22px 26px; }
+
+    /* ── Fußzeile ── */
+    footer {
+      border-top: 2px solid #e0e0e0;
+      margin-top: 44px;
+      padding-top: 14px;
+      font-size: 9.5pt;
+      color: #757575;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* ── Print ── */
+    @media print {
+      body { background: #fff; }
+      .page { box-shadow: none; border-radius: 0; padding: 20px 28px; margin: 0; max-width: 100%; }
+      pre { font-size: 9pt; }
+      .step { break-inside: avoid; }
+      .solution { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Kopfzeile -->
+  <header>
+    <div class="header-meta">
+      <span>Informatik &nbsp;|&nbsp; Klasse 9</span>
+      <span>Name: _________________________________ &nbsp; Datum: ______________</span>
+    </div>
+    <h1>Arbeitsblatt: Die Klasse <code style="font-size:18pt;background:#e3f2fd;color:#1565c0;">Konto.java</code> selbst programmieren</h1>
+    <div class="subtitle">Eine Schritt-für-Schritt-Anleitung zur objektorientierten Programmierung in Java</div>
+  </header>
+
+  <!-- Lernziele -->
+  <div class="lernziele">
+    <h2>&#127919; Lernziele</h2>
+    <ul>
+      <li>Du kannst eine Java-Klasse mit Attributen, Konstruktor und Methoden selbst schreiben.</li>
+      <li>Du verstehst den Unterschied zwischen Attributen, Getter- und Setter-Methoden.</li>
+      <li>Du kannst eine <code>if</code>-Bedingung einsetzen, um Kontooperationen zu prüfen.</li>
+      <li>Du kannst Objekte erstellen und deren Methoden aufrufen.</li>
+    </ul>
+  </div>
+
+  <!-- Einleitung -->
+  <h2 class="section-title">&#128218; Einleitung</h2>
+  <p>
+    In dieser Aufgabe baust du eine Klasse für ein einfaches Bankkonto nach.
+    Ein <strong>Konto</strong> kennt seinen Inhaber und seinen aktuellen Kontostand.
+    Es kann Geld annehmen (<em>einzahlen</em>), Geld ausgeben (<em>abheben</em>) und
+    seinen Stand auf der Konsole anzeigen.
+  </p>
+  <p style="margin-top:10px;">
+    Du arbeitest dich <strong>Schritt für Schritt</strong> durch die Aufgabe.
+    Am Ende jedes Schritts steht eine kleine Aufgabe, die du direkt in deine
+    Entwicklungsumgebung einträgst.
+  </p>
+
+  <div class="info-box aufgabe">
+    <div class="icon">&#128204;</div>
+    <div class="text">
+      <strong>So arbeitest du:</strong>
+      Öffne deine Entwicklungsumgebung (z.&nbsp;B. BlueJ oder IntelliJ IDEA) und lege
+      eine neue Datei <code>Konto.java</code> an. Schreibe den Code jedes Schritts
+      selbst ab — das Abtippen hilft dir, den Code zu verstehen!
+    </div>
+  </div>
+
+  <!-- ──────────────────────── SCHRITT 1 ──────────────────────── -->
+  <h2 class="section-title">&#128295; Schritt für Schritt</h2>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">1</div>
+      <div class="step-title">Die Klassenhülle anlegen</div>
+    </div>
+    <div class="step-body">
+      <p>
+        Jede Java-Klasse beginnt mit dem Schlüsselwort <code>public class</code>, gefolgt vom
+        <strong>Klassennamen</strong>. Der gesamte Inhalt steht zwischen zwei
+        geschweiften Klammern <code>{ }</code>.
+      </p>
+      <p>Der Klassenname muss exakt mit dem Dateinamen übereinstimmen:</p>
+      <pre><span class="kw">public class</span> <span class="ty">Konto</span> {
+    <span class="cm">// Hier kommt dein gesamter Code rein</span>
+}</pre>
+
+      <div class="info-box merke">
+        <div class="icon">&#128161;</div>
+        <div class="text">
+          <strong>Merke:</strong>
+          Die äußere geschweifte Klammer <code>{</code> öffnet die Klasse, die letzte
+          <code>}</code> schließt sie. Alles — Attribute, Konstruktor, Methoden — befindet
+          sich dazwischen.
+        </div>
+      </div>
+
+      <div class="info-box aufgabe">
+        <div class="icon">&#9999;&#65039;</div>
+        <div class="text">
+          <strong>Deine Aufgabe:</strong>
+          Erstelle die Datei <code>Konto.java</code> und schreibe die Klassenhülle.
+          Speichere die Datei. Prüfe, ob das Programm fehlerfrei kompiliert.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────── SCHRITT 2 ──────────────────────── -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">2</div>
+      <div class="step-title">Attribute (Instanzvariablen) hinzufügen</div>
+    </div>
+    <div class="step-body">
+      <p>
+        <strong>Attribute</strong> sind Variablen, die zu einem Objekt gehören.
+        Sie speichern den <em>Zustand</em> des Objekts — also alle Informationen,
+        die ein Konto beschreiben.
+      </p>
+      <p>Unser Konto braucht zwei Attribute:</p>
+
+      <table>
+        <thead>
+          <tr><th>Attributname</th><th>Datentyp</th><th>Bedeutung</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>inhaber</code></td><td><code>String</code></td><td>Name des Kontoinhabers (Text)</td></tr>
+          <tr><td><code>kontostand</code></td><td><code>double</code></td><td>Aktuelles Guthaben in Euro (Dezimalzahl)</td></tr>
+        </tbody>
+      </table>
+
+      <p>Attribute werden direkt nach der öffnenden Klammer der Klasse deklariert:</p>
+      <pre><span class="kw">public class</span> <span class="ty">Konto</span> {
+    <span class="ty">String</span> inhaber;
+    <span class="ty">double</span> kontostand;
+}</pre>
+
+      <div class="info-box merke">
+        <div class="icon">&#128161;</div>
+        <div class="text">
+          <strong>Warum <code>double</code> und nicht <code>int</code>?</strong>
+          Geldbeträge können Cent-Beträge haben (z.&nbsp;B. 12,50 Euro).
+          Der Typ <code>double</code> kann Dezimalzahlen speichern, <code>int</code> nur ganze Zahlen.
+        </div>
+      </div>
+
+      <div class="info-box aufgabe">
+        <div class="icon">&#9999;&#65039;</div>
+        <div class="text">
+          <strong>Deine Aufgabe:</strong>
+          Füge die beiden Attribute in deine Klasse ein.
+          Achte auf den richtigen Datentyp und das Semikolon am Ende jeder Zeile.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────── SCHRITT 3 ──────────────────────── -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">3</div>
+      <div class="step-title">Den Konstruktor schreiben</div>
+    </div>
+    <div class="step-body">
+      <p>
+        Der <strong>Konstruktor</strong> ist eine spezielle Methode, die automatisch
+        aufgerufen wird, wenn man ein neues Objekt mit <code>new Konto(...)</code> erstellt.
+        Er legt die Anfangswerte der Attribute fest.
+      </p>
+
+      <div class="info-box merke">
+        <div class="icon">&#128161;</div>
+        <div class="text">
+          <strong>Besonderheiten des Konstruktors:</strong>
+          <ul style="margin-left:18px; margin-top:6px;">
+            <li>Er heißt <strong>genauso wie die Klasse</strong> (hier: <code>Konto</code>).</li>
+            <li>Er hat <strong>keinen Rückgabetyp</strong> (kein <code>void</code>, kein <code>int</code>, …).</li>
+            <li>Er wird mit <code>public</code> eingeleitet.</li>
+          </ul>
+        </div>
+      </div>
+
+      <p>Unser Konstruktor bekommt zwei Parameter: den Namen und den Startbetrag:</p>
+      <pre><span class="kw">public</span> <span class="ty">Konto</span>(<span class="ty">String</span> name, <span class="ty">double</span> startBetrag) {
+    inhaber = name;           <span class="cm">// Attribut ← Parameter</span>
+    kontostand = startBetrag; <span class="cm">// Attribut ← Parameter</span>
+}</pre>
+
+      <p>
+        <strong>So wird der Konstruktor benutzt:</strong>
+        Mit <code>new Konto("Anna", 1000.0)</code> wird ein Objekt erzeugt.
+        Dabei werden automatisch <code>inhaber = "Anna"</code> und <code>kontostand = 1000.0</code> gesetzt.
+      </p>
+
+      <div class="info-box aufgabe">
+        <div class="icon">&#9999;&#65039;</div>
+        <div class="text">
+          <strong>Deine Aufgabe:</strong>
+          Füge den Konstruktor in deine Klasse ein. Deine Klasse sollte jetzt so aussehen:
+          <pre style="margin-top:10px;"><span class="kw">public class</span> <span class="ty">Konto</span> {
+    <span class="ty">String</span> inhaber;
+    <span class="ty">double</span> kontostand;
+
+    <span class="kw">public</span> <span class="ty">Konto</span>(<span class="ty">String</span> name, <span class="ty">double</span> startBetrag) {
+        inhaber = name;
+        kontostand = startBetrag;
+    }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────── SCHRITT 4 ──────────────────────── -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">4</div>
+      <div class="step-title">Die Methode <code>einzahlen</code> schreiben</div>
+    </div>
+    <div class="step-body">
+      <p>
+        Methoden beschreiben, was ein Objekt <em>tun kann</em>.
+        Die Methode <code>einzahlen</code> erhöht den Kontostand um einen bestimmten Betrag.
+      </p>
+      <pre><span class="kw">public void</span> einzahlen(<span class="ty">double</span> betrag) {
+    kontostand = kontostand + betrag;
+}</pre>
+
+      <div class="info-box merke">
+        <div class="icon">&#128161;</div>
+        <div class="text">
+          <strong>Erklärung Zeile für Zeile:</strong>
+          <ul style="margin-left:18px; margin-top:6px;">
+            <li><code>public void</code> — die Methode ist öffentlich zugänglich und gibt <em>nichts</em> zurück</li>
+            <li><code>einzahlen</code> — der Name der Methode</li>
+            <li><code>(double betrag)</code> — die Methode erwartet eine Dezimalzahl als Eingabe</li>
+            <li><code>kontostand = kontostand + betrag;</code> — der alte Stand plus der eingezahlte Betrag ergibt den neuen Stand</li>
+          </ul>
+        </div>
+      </div>
+
+      <p><strong>Beispiel:</strong> Wenn <code>kontostand = 1000.0</code> und du rufst <code>einzahlen(500.0)</code> auf:</p>
+      <pre>kontostand = 1000.0 + 500.0  <span class="cm">// → kontostand wird 1500.0</span></pre>
+
+      <div class="info-box aufgabe">
+        <div class="icon">&#9999;&#65039;</div>
+        <div class="text">
+          <strong>Deine Aufgabe:</strong>
+          Füge die Methode <code>einzahlen</code> in deine Klasse ein.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────── SCHRITT 5 ──────────────────────── -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">5</div>
+      <div class="step-title">Die Methode <code>kontostandAusgeben</code> schreiben</div>
+    </div>
+    <div class="step-body">
+      <p>
+        Diese Methode soll eine freundliche Meldung mit dem aktuellen Kontostand
+        auf der Konsole ausgeben:
+      </p>
+      <pre><span class="kw">public void</span> kontostandAusgeben() {
+    System.out.println(<span class="st">"Der Kontostand X beträgt: "</span> + kontostand + <span class="st">" Euro"</span>);
+}</pre>
+
+      <div class="info-box merke">
+        <div class="icon">&#128161;</div>
+        <div class="text">
+          <strong>Wie funktioniert <code>System.out.println</code>?</strong>
+          Es gibt den Text in Klammern auf der Konsole aus und springt danach
+          in eine neue Zeile. Mit dem <code>+</code>-Zeichen werden Text-Teile und
+          Variablenwerte zu einem einzigen String zusammengesetzt.
+        </div>
+      </div>
+
+      <div class="info-box bonus">
+        <div class="icon">&#11088;</div>
+        <div class="text">
+          <strong>Bonus-Aufgabe:</strong>
+          Das <code>X</code> im Text ist ein Platzhalter. Kannst du es durch den echten
+          Namen des Inhabers ersetzen? Nutze das Attribut <code>inhaber</code>!
+          <br/><br/>
+          <strong>Gewünschte Ausgabe:</strong>
+          <div class="output" style="margin-top:8px;">Der Kontostand Anna beträgt: 1500.0 Euro</div>
+        </div>
+      </div>
+
+      <div class="info-box aufgabe">
+        <div class="icon">&#9999;&#65039;</div>
+        <div class="text">
+          <strong>Deine Aufgabe:</strong>
+          Füge die Methode <code>kontostandAusgeben</code> in deine Klasse ein.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────── SCHRITT 6 ──────────────────────── -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">6</div>
+      <div class="step-title">Getter-Methoden schreiben</div>
+    </div>
+    <div class="step-body">
+      <p>
+        <strong>Getter</strong> sind Methoden, die den Wert eines Attributs nach außen
+        weitergeben. Sie beginnen immer mit <code>get</code> und dem Attributnamen.
+      </p>
+      <p>
+        Warum brauchen wir Getter? Wenn eine andere Klasse den Kontostand lesen möchte,
+        geht das über den Getter — sie greift damit nicht direkt auf das Attribut zu.
+      </p>
+      <pre><span class="kw">public double</span> getKontostand() {
+    <span class="kw">return</span> kontostand;
+}
+
+<span class="kw">public</span> <span class="ty">String</span> getInhaber() {
+    <span class="kw">return</span> inhaber;
+}</pre>
+
+      <div class="info-box merke">
+        <div class="icon">&#128161;</div>
+        <div class="text">
+          <strong>Wichtige Regel:</strong>
+          Der Rückgabetyp (z.&nbsp;B. <code>double</code> oder <code>String</code>)
+          muss zum Typ des Attributs passen, das zurückgegeben wird.
+          Das Schlüsselwort <code>return</code> sendet den Wert zurück an den Aufrufer.
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>Methode</th><th>Rückgabetyp</th><th>Was sie zurückgibt</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>getKontostand()</code></td><td><code>double</code></td><td>Den aktuellen Kontostand</td></tr>
+          <tr><td><code>getInhaber()</code></td><td><code>String</code></td><td>Den Namen des Inhabers</td></tr>
+        </tbody>
+      </table>
+
+      <p><strong>Beispiel für die Verwendung:</strong></p>
+      <pre><span class="ty">Konto</span> k = <span class="kw">new</span> <span class="ty">Konto</span>(<span class="st">"Anna"</span>, <span class="nm">1000.0</span>);
+System.out.println(k.getKontostand()); <span class="cm">// Ausgabe: 1000.0</span>
+System.out.println(k.getInhaber());    <span class="cm">// Ausgabe: Anna</span></pre>
+
+      <div class="info-box aufgabe">
+        <div class="icon">&#9999;&#65039;</div>
+        <div class="text">
+          <strong>Deine Aufgabe:</strong>
+          Füge beide Getter-Methoden in deine Klasse ein.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────── SCHRITT 7 ──────────────────────── -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">7</div>
+      <div class="step-title">Setter-Methoden schreiben</div>
+    </div>
+    <div class="step-body">
+      <p>
+        <strong>Setter</strong> ermöglichen es, den Wert eines Attributs von außen zu verändern.
+        Sie beginnen immer mit <code>set</code> und dem Attributnamen.
+      </p>
+      <pre><span class="kw">public void</span> setInhaber(<span class="ty">String</span> neuerName) {
+    inhaber = neuerName;
+}
+
+<span class="kw">public void</span> setKontostand(<span class="ty">double</span> neuerStand) {
+    kontostand = neuerStand;
+}</pre>
+
+      <div class="info-box merke">
+        <div class="icon">&#128161;</div>
+        <div class="text">
+          <strong>Getter vs. Setter:</strong>
+          <ul style="margin-left:18px; margin-top:6px;">
+            <li><strong>Getter</strong> → liest einen Wert → hat einen Rückgabetyp (z.&nbsp;B. <code>double</code>) → kein Parameter</li>
+            <li><strong>Setter</strong> → verändert einen Wert → hat <code>void</code> als Rückgabetyp → hat einen Parameter</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="info-box aufgabe">
+        <div class="icon">&#9999;&#65039;</div>
+        <div class="text">
+          <strong>Deine Aufgabe:</strong>
+          Füge beide Setter-Methoden in deine Klasse ein.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────── SCHRITT 8 ──────────────────────── -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">8</div>
+      <div class="step-title">Die Methode <code>abheben</code> mit einer Bedingung</div>
+    </div>
+    <div class="step-body">
+      <p>
+        Beim Abheben gibt es eine wichtige Regel: Man kann nur Geld abheben,
+        wenn <strong>genug Guthaben vorhanden ist</strong>. Dafür brauchen wir
+        eine <code>if</code>-Bedingung:
+      </p>
+      <pre><span class="kw">public void</span> abheben(<span class="ty">double</span> betrag) {
+    <span class="kw">if</span> (kontostand &gt;= betrag) {
+        kontostand = kontostand - betrag;
+    }
+}</pre>
+
+      <div class="info-box merke">
+        <div class="icon">&#128161;</div>
+        <div class="text">
+          <strong>So funktioniert die <code>if</code>-Bedingung:</strong>
+          <ul style="margin-left:18px; margin-top:6px;">
+            <li><code>if (Bedingung) { ... }</code> — der Code in <code>{ }</code> wird nur ausgeführt, wenn die Bedingung <em>wahr</em> ist</li>
+            <li><code>&gt;=</code> bedeutet "größer oder gleich"</li>
+            <li>Ist nicht genug Geld vorhanden, wird der Code in <code>{ }</code> einfach übersprungen</li>
+          </ul>
+        </div>
+      </div>
+
+      <p><strong>Beispiel:</strong></p>
+      <table>
+        <thead>
+          <tr><th>Kontostand</th><th>Befehl</th><th>Bedingung</th><th>Ergebnis</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1000.0 €</td><td><code>abheben(300.0)</code></td><td>1000 &ge; 300 ✓</td><td>Kontostand: 700.0 €</td></tr>
+          <tr><td>700.0 €</td><td><code>abheben(900.0)</code></td><td>700 &ge; 900 ✗</td><td>Kontostand bleibt: 700.0 €</td></tr>
+        </tbody>
+      </table>
+
+      <div class="info-box aufgabe">
+        <div class="icon">&#9999;&#65039;</div>
+        <div class="text">
+          <strong>Deine Aufgabe:</strong>
+          Füge die Methode <code>abheben</code> in deine Klasse ein.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────── SCHRITT 9 ──────────────────────── -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">9</div>
+      <div class="step-title">Die Klasse testen</div>
+    </div>
+    <div class="step-body">
+      <p>
+        Jetzt ist deine Klasse fertig! Teste sie mit folgendem Code
+        (z.&nbsp;B. in einer <code>main</code>-Methode oder direkt in BlueJ):
+      </p>
+      <pre><span class="ty">Konto</span> k = <span class="kw">new</span> <span class="ty">Konto</span>(<span class="st">"Anna"</span>, <span class="nm">1000.0</span>);  <span class="cm">// Konto erstellen</span>
+k.einzahlen(<span class="nm">500.0</span>);                        <span class="cm">// 500 Euro einzahlen</span>
+System.out.println(<span class="st">"Der Kontostand A beträgt: "</span> + k.getKontostand() + <span class="st">" Euro"</span>);
+k.kontostandAusgeben();</pre>
+
+      <p>Erwartete Ausgabe auf der Konsole:</p>
+      <div class="output">Der Kontostand A beträgt: 1500.0 Euro<br/>Der Kontostand X beträgt: 1500.0 Euro</div>
+      <p style="font-size:10pt; color:#555; margin-top:4px;">
+        (Das "X" bleibt stehen, bis du die Bonus-Aufgabe aus Schritt 5 gelöst hast.)
+      </p>
+
+      <div class="info-box aufgabe">
+        <div class="icon">&#9999;&#65039;</div>
+        <div class="text">
+          <strong>Weitere Testaufgaben:</strong>
+          <ul class="checklist" style="margin-top:8px;">
+            <li>Erstelle ein zweites Konto für <code>"Ben"</code> mit einem Startbetrag von <code>500.0</code> Euro.</li>
+            <li>Zahle <code>200.0</code> Euro auf Bens Konto ein. Gib den neuen Stand aus.</li>
+            <li>Hebe <code>100.0</code> Euro von Bens Konto ab. Was ist der neue Kontostand?</li>
+            <li>Versuche <code>800.0</code> Euro von Bens Konto abzuheben. Was passiert? Erkläre warum.</li>
+            <li>Ändere den Inhaber von Bens Konto mit <code>setInhaber(...)</code> auf <code>"Benjamin"</code>. Lass den Inhaber mit <code>getInhaber()</code> ausgeben.</li>
+            <li><strong>Bonus:</strong> Setze den Kontostand mit <code>setKontostand(0.0)</code> auf null und hebe danach <code>1.0</code> Euro ab. Was passiert?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Musterlösung -->
+  <div class="solution">
+    <div class="solution-header">
+      &#128274; Musterlösung — vollständige Klasse <code style="color:#b2dfdb; font-size:12pt;">Konto.java</code>
+      <span style="font-size:10pt; font-weight:400; margin-left:auto; color:#b0bec5;">
+        (Erst anschauen, wenn du fertig bist!)
+      </span>
+    </div>
+    <div class="solution-body">
+      <pre><span class="kw">public class</span> <span class="ty">Konto</span> {
+    <span class="ty">String</span> inhaber;
+    <span class="ty">double</span> kontostand;
+
+    <span class="kw">public</span> <span class="ty">Konto</span>(<span class="ty">String</span> name, <span class="ty">double</span> startBetrag) {
+        inhaber    = name;
+        kontostand = startBetrag;
+    }
+
+    <span class="kw">public void</span> einzahlen(<span class="ty">double</span> betrag) {
+        kontostand = kontostand + betrag;
+    }
+
+    <span class="kw">public void</span> kontostandAusgeben() {
+        System.out.println(<span class="st">"Der Kontostand "</span> + inhaber + <span class="st">" beträgt: "</span> + kontostand + <span class="st">" Euro"</span>);
+    }
+
+    <span class="kw">public double</span> getKontostand() {
+        <span class="kw">return</span> kontostand;
+    }
+
+    <span class="kw">public</span> <span class="ty">String</span> getInhaber() {
+        <span class="kw">return</span> inhaber;
+    }
+
+    <span class="kw">public void</span> setInhaber(<span class="ty">String</span> neuerName) {
+        inhaber = neuerName;
+    }
+
+    <span class="kw">public void</span> setKontostand(<span class="ty">double</span> neuerStand) {
+        kontostand = neuerStand;
+    }
+
+    <span class="kw">public void</span> abheben(<span class="ty">double</span> betrag) {
+        <span class="kw">if</span> (kontostand &gt;= betrag) {
+            kontostand = kontostand - betrag;
+        }
+    }
+}</pre>
+    </div>
+  </div>
+
+  <!-- Fußzeile -->
+  <footer>
+    <span>Informatik &middot; Klasse 9 &middot; Objektorientierte Programmierung</span>
+    <span>&#169; Arbeitsblatt zur unterrichtlichen Verwendung</span>
+  </footer>
+
+</div>
+</body>
+</html>
